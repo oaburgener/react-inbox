@@ -2,7 +2,8 @@ import React from 'react'
 
 
 const Toolbar = ({messages, selectAll, allSelectedCheck, someSelectedCheck, markUnread, markRead,
-  deleteMessage, addingLabels, removeLabels, countUnread, disableToolbar}) => {
+  deleteMessage, addingLabels, removeLabels, countUnread, disableToolbar, request, persistLabels, persistLabelsRemove,
+  persistDeleted}) => {
 
 let buttonCheck = ''
 if(allSelectedCheck()){
@@ -19,6 +20,7 @@ countUnread = () => {
   return unreadNumber
 }
 
+
 disableToolbar = () => {
   let disabled = ""
   const disableArray = messages.filter(message => message.selected)
@@ -31,6 +33,54 @@ disableToolbar = () => {
 }
 
 
+persistLabels = (messages, event) => {
+  const body = {
+    "messageIds": [],
+    "command": "addLabel",
+    "label": []
+  }
+const newMessages = messages.map(message => {
+  if(message.selected === true){
+    body.messageIds.push(message.id)
+    body.label.push(event.target.value)
+  }})
+  request(body, 'PATCH')
+  addingLabels(messages, event.target.value)
+}
+
+
+persistLabelsRemove = (messages, event) => {
+  console.log('hello!');
+  const body = {
+    "messageIds": [],
+    "command": "removeLabel",
+    "label": []
+  }
+const newMessages = messages.map(message => {
+  console.log(message);
+  if(message.selected === true){
+    body.messageIds.push(message.id)
+    body.label.push(event.target.value)
+  }return body})
+  request(body, 'PATCH')
+  removeLabels(messages, event.target.value)
+}
+
+
+persistDeleted = (messages) => {
+  const body = {
+    "messageIds": [],
+    "command": "delete"
+  }
+  const newMessages = messages.map(message => {
+    if(message.selected === true){
+      body.messageIds.push(message.id)
+    }return body})
+  request(body, 'DELETE')
+  deleteMessage(messages)
+}
+
+
   return (
   <div className="row toolbar">
     <div className="col-md-12">
@@ -38,6 +88,10 @@ disableToolbar = () => {
         <span className="badge badge">{`${countUnread()}`}</span>
         unread messages
       </p>
+
+      <a className="btn btn-danger">
+        <i className="fa fa-plus"></i>
+      </a>
 
       <button className="btn btn-default" onClick = {() => {selectAll(messages)}}>
         <i className={`fa fa-${buttonCheck}square-o`}></i>
@@ -51,21 +105,21 @@ disableToolbar = () => {
         Mark As Unread
       </button>
 
-      <select className="form-control label-select" disabled={`${disableToolbar()}`} onChange = {(event) => {addingLabels(messages, event.target.value)}}>
+      <select className="form-control label-select" disabled={`${disableToolbar()}`} onChange = {(event) => {persistLabels(messages, event)}}>
         <option>Apply label</option>
         <option value="dev">dev</option>
         <option value="personal">personal</option>
         <option value="gschool">gschool</option>
       </select>
 
-      <select className="form-control label-select" disabled={`${disableToolbar()}`} onChange = {(event) => {removeLabels(messages, event.target.value)}}>
+      <select className="form-control label-select" disabled={`${disableToolbar()}`} onChange = {(event) => {persistLabelsRemove(messages, event)}}>
         <option>Remove label</option>
         <option value="dev">dev</option>
         <option value="personal">personal</option>
         <option value="gschool">gschool</option>
       </select>
 
-      <button className='btn btn-default' disabled={`${disableToolbar()}`} onClick = {() => {deleteMessage(messages)}}>
+      <button className='btn btn-default' disabled={`${disableToolbar()}`} onClick = {() => {persistDeleted(messages)}}>
         <i className="fa fa-trash-o"></i>
       </button>
     </div>
