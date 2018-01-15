@@ -3,12 +3,16 @@ import './App.css';
 import MessageList from './Components/MessageList';
 import Toolbar from './Components/Toolbar';
 import Navbar from './Components/Navbar'
+import ComposeForm from './Components/ComposeForm'
 
 class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      messages: []
+      messages: [],
+      clicked: false,
+      subject: '',
+      bodyContent: ''
     }
   }
   async componentDidMount() {
@@ -18,7 +22,6 @@ class App extends Component {
  }
 
  async request (body, method) {
-   console.log('hello!');
     await fetch('http://localhost:8082/api/messages', {
      method: method,
      body: JSON.stringify(body),
@@ -113,6 +116,25 @@ class App extends Component {
     })
   }
 
+  showCompose = () => {
+    let composeClicked = this.state.clicked
+    composeClicked = !composeClicked
+    this.setState({clicked: composeClicked})
+  }
+
+  gatherSubject = (event) => {
+    let subject = event.target.value
+    this.setState({subject: subject})
+    console.log(this.state);
+
+  }
+
+  gatherBody = (event) => {
+    let bodyContent = event.target.value
+    this.setState({bodyContent: bodyContent})
+    console.log(this.state);
+  }
+
   render() {
 
     return (
@@ -124,7 +146,10 @@ class App extends Component {
             allSelectedCheck = {this.allSelectedCheck} someSelectedCheck = {this.someSelectedCheck}
           markUnread = {this.markUnread} markRead = {this.markRead} deleteMessage = {this.deleteMessage}
           addingLabels = {this.addingLabels} removeLabels = {this.removeLabels} request = {this.request}
-        persistLabels = {this.persistLabels} persistLabelsRemove = {this.persistLabelsRemove} persistDeleted ={this.persistDeleted}/>
+        persistLabels = {this.persistLabels} persistLabelsRemove = {this.persistLabelsRemove}
+        persistDeleted ={this.persistDeleted} showCompose = {this.showCompose} clicked = {this.state.clicked}/>
+          <ComposeForm clicked = {this.state.clicked} gatherSubject = {this.gatherSubject} gatherBody = {this.gatherBody}
+          subject = {this.state.subject} bodyContent = {this.state.bodyContent} request = {this.request}/>
           <MessageList messages={this.state.messages} toggleClass={this.toggleClass} request={this.request}/>
         </div>
 

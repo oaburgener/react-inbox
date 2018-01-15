@@ -3,7 +3,7 @@ import React from 'react'
 
 const Toolbar = ({messages, selectAll, allSelectedCheck, someSelectedCheck, markUnread, markRead,
   deleteMessage, addingLabels, removeLabels, countUnread, disableToolbar, request, persistLabels, persistLabelsRemove,
-  persistDeleted}) => {
+  persistDeleted, showCompose}) => {
 
 let buttonCheck = ''
 if(allSelectedCheck()){
@@ -37,7 +37,7 @@ persistLabels = (messages, event) => {
   const body = {
     "messageIds": [],
     "command": "addLabel",
-    "label": []
+    "label": ''
   }
 const newMessages = messages.map(message => {
   if(message.selected === true){
@@ -54,13 +54,13 @@ persistLabelsRemove = (messages, event) => {
   const body = {
     "messageIds": [],
     "command": "removeLabel",
-    "label": []
+    "label": ''
   }
 const newMessages = messages.map(message => {
   console.log(message);
   if(message.selected === true){
     body.messageIds.push(message.id)
-    body.label.push(event.target.value)
+    body.label = event.target.value
   }return body})
   request(body, 'PATCH')
   removeLabels(messages, event.target.value)
@@ -75,8 +75,9 @@ persistDeleted = (messages) => {
   const newMessages = messages.map(message => {
     if(message.selected === true){
       body.messageIds.push(message.id)
-    }return body})
-  request(body, 'DELETE')
+    }
+  })
+  request(body, 'PATCH')
   deleteMessage(messages)
 }
 
@@ -89,7 +90,7 @@ persistDeleted = (messages) => {
         unread messages
       </p>
 
-      <a className="btn btn-danger">
+      <a className="btn btn-danger" onClick = {() => {showCompose()}}>
         <i className="fa fa-plus"></i>
       </a>
 
