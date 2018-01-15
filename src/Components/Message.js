@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Message = ({message, toggleClass}) => {
+const Message = ({message, toggleClass, request}) => {
 
 const readClass = message.read ? 'read' : 'unread';
 const selectedClass = message.selected ? 'selected' : ''
@@ -11,7 +11,14 @@ const checkedClass = message.selected ? 'checked' : ''
   return (
 
     <div className= {`row message ${readClass} ${selectedClass}`} onClick={()=>
-      {toggleClass(message, 'read')}}>
+      {
+        const body = {
+          "messageIds": [message.id],
+          "command": "read",
+          "read": !message.read
+        }
+        request(body, 'PATCH')
+        toggleClass(message, 'read')}}>
       <div className="col-xs-1">
         <div className="row">
           <div className="col-xs-2" onClick={(event)=>{
@@ -21,6 +28,12 @@ const checkedClass = message.selected ? 'checked' : ''
           </div>
           <div className="col-xs-2" onClick={(event) =>{
             event.stopPropagation()
+            const body = {
+              "messageIds": [message.id],
+              "command": "star",
+              "star": !message.starred
+            }
+            request(body, 'PATCH')
             toggleClass(message, 'starred')}}>
             <i className={`star fa fa-star${starredClass}`}></i>
           </div>
