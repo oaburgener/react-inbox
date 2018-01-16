@@ -1,9 +1,10 @@
 import React from 'react'
+import { Switch, Link } from 'react-router-dom'
 
 
 const Toolbar = ({messages, selectAll, allSelectedCheck, someSelectedCheck, markUnread, markRead,
   deleteMessage, addingLabels, removeLabels, countUnread, disableToolbar, request, persistLabels, persistLabelsRemove,
-  persistDeleted, showCompose}) => {
+  persistDeleted, showCompose, hideCompose, togglePath, clicked, path}) => {
 
 let buttonCheck = ''
 if(allSelectedCheck()){
@@ -81,6 +82,22 @@ persistDeleted = (messages) => {
   deleteMessage(messages)
 }
 
+togglePath = () => {
+  console.log(window.location.href);
+  if (window.location.href === 'http://localhost:3000/' && clicked === false){
+    console.log('main page shown');
+    return '/'
+  }else if (window.location.href === 'http://localhost:3000/compose' && clicked === true){
+    console.log('compose message shows');
+    return '/compose'
+  }else if (window.location.href === 'http://localhost:3000/compose' && clicked === false){
+    console.log('main screen 2');
+    return '/'
+  }else if (window.location.href === 'http://localhost:3000/' && clicked === true){
+    console.log('compose message 2');
+    return '/compose'
+  }
+}
 
   return (
   <div className="row toolbar">
@@ -90,9 +107,11 @@ persistDeleted = (messages) => {
         unread messages
       </p>
 
-      <a className="btn btn-danger" onClick = {() => {showCompose()}}>
+
+      <Link to={`${path}`} className="btn btn-danger" onClick = {() => {showCompose()}}>
         <i className="fa fa-plus"></i>
-      </a>
+      </Link>
+
 
       <button className="btn btn-default" onClick = {() => {selectAll(messages)}}>
         <i className={`fa fa-${buttonCheck}square-o`}></i>

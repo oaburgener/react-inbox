@@ -1,6 +1,7 @@
 import React from 'react'
 
 
+
 const ComposeForm = ({clicked, gatherSubject, gatherBody, subject, bodyContent, request }) => {
 
   return (

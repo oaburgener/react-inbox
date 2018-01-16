@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch
+} from 'react-router-dom';
 import './App.css';
 import MessageList from './Components/MessageList';
 import Toolbar from './Components/Toolbar';
 import Navbar from './Components/Navbar'
 import ComposeForm from './Components/ComposeForm'
+
 
 class App extends Component {
   constructor(props){
@@ -11,6 +18,7 @@ class App extends Component {
     this.state = {
       messages: [],
       clicked: false,
+      path: '',
       subject: '',
       bodyContent: ''
     }
@@ -118,8 +126,14 @@ class App extends Component {
 
   showCompose = () => {
     let composeClicked = this.state.clicked
+    let path = this.state.path
     composeClicked = !composeClicked
-    this.setState({clicked: composeClicked})
+    if(composeClicked === false){
+      path = '/'
+    }else{
+      path = '/compose'
+    }
+    this.setState({clicked: composeClicked, path: path})
   }
 
   gatherSubject = (event) => {
@@ -138,22 +152,42 @@ class App extends Component {
   render() {
 
     return (
+      <Router>
       <div className="App">
         <Navbar />
 
         <div className='container'>
-          <Toolbar messages={this.state.messages} selectAll = {this.selectAll}
-            allSelectedCheck = {this.allSelectedCheck} someSelectedCheck = {this.someSelectedCheck}
-          markUnread = {this.markUnread} markRead = {this.markRead} deleteMessage = {this.deleteMessage}
-          addingLabels = {this.addingLabels} removeLabels = {this.removeLabels} request = {this.request}
-        persistLabels = {this.persistLabels} persistLabelsRemove = {this.persistLabelsRemove}
-        persistDeleted ={this.persistDeleted} showCompose = {this.showCompose} clicked = {this.state.clicked}/>
-          <ComposeForm clicked = {this.state.clicked} gatherSubject = {this.gatherSubject} gatherBody = {this.gatherBody}
-          subject = {this.state.subject} bodyContent = {this.state.bodyContent} request = {this.request}/>
-          <MessageList messages={this.state.messages} toggleClass={this.toggleClass} request={this.request}/>
-        </div>
+          <Route exact path ="/" render={() => (
+            <div>
+              <Toolbar messages={this.state.messages} selectAll = {this.selectAll}
+                allSelectedCheck = {this.allSelectedCheck} someSelectedCheck = {this.someSelectedCheck}
+              markUnread = {this.markUnread} markRead = {this.markRead} deleteMessage = {this.deleteMessage}
+              addingLabels = {this.addingLabels} removeLabels = {this.removeLabels} request = {this.request}
+            persistLabels = {this.persistLabels} persistLabelsRemove = {this.persistLabelsRemove}
+            persistDeleted ={this.persistDeleted} showCompose = {this.showCompose} hideCompose = {this.hideCompose}
+            clicked = {this.state.clicked} path = {this.state.path}/>
+              <MessageList messages={this.state.messages} toggleClass={this.toggleClass} request={this.request}/>
+            </div>
+          )}/>
 
+          <Route path = "/compose" render={() => (
+            <div>
+              <ComposeForm clicked = {this.state.clicked} gatherSubject = {this.gatherSubject} gatherBody = {this.gatherBody}
+            subject = {this.state.subject} bodyContent = {this.state.bodyContent} request = {this.request}/>
+            <Toolbar messages={this.state.messages} selectAll = {this.selectAll}
+              allSelectedCheck = {this.allSelectedCheck} someSelectedCheck = {this.someSelectedCheck}
+            markUnread = {this.markUnread} markRead = {this.markRead} deleteMessage = {this.deleteMessage}
+            addingLabels = {this.addingLabels} removeLabels = {this.removeLabels} request = {this.request}
+          persistLabels = {this.persistLabels} persistLabelsRemove = {this.persistLabelsRemove}
+          persistDeleted ={this.persistDeleted} showCompose = {this.showCompose} clicked = {this.state.clicked}
+          hideCompose = {this.hideCompose} path = {this.state.path}/>
+            <MessageList messages={this.state.messages} toggleClass={this.toggleClass} request={this.request}/>
+          </div>
+          )}/>
+
+        </div>
       </div>
+    </Router>
     );
   }
 }
