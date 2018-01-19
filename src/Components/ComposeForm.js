@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 
 
 const ComposeForm = ({clicked, gatherSubject, gatherBody, subject, bodyContent, request }) => {
@@ -33,9 +33,13 @@ const ComposeForm = ({clicked, gatherSubject, gatherBody, subject, bodyContent, 
             "body": bodyContent
           }
           request(body, 'POST')
-
+          window.location.reload();
         }}>
-          <input type="submit" value="Send" className="btn btn-primary"/>
+
+        <Link to='/'>
+        <input type="submit" value="Send" className="btn btn-danger"/>
+        </Link>
+
         </div>
       </div>
     </form>

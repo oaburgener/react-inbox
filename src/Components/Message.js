@@ -1,15 +1,30 @@
 import React from 'react'
+import {
+  Route,
+  Link
+} from 'react-router-dom';
+import Body from './Body'
+let style = 'none'
 
-const Message = ({message, toggleClass, request}) => {
+const Message = ({message, toggleClass, request, pathId}) => {
 
 const readClass = message.read ? 'read' : 'unread';
 const selectedClass = message.selected ? 'selected' : ''
 const starredClass = message.starred ? '' : '-o'
 const checkedClass = message.selected ? 'checked' : ''
 
+pathId = () => {
+  if(style === 'none'){
+    style = 'block'
+  }else{
+    style = 'none'
+  }
+}
+
+
 
   return (
-
+    <div>
     <div className= {`row message ${readClass} ${selectedClass}`} onClick={()=>
       {
         const body = {
@@ -17,6 +32,7 @@ const checkedClass = message.selected ? 'checked' : ''
           "command": "read",
           "read": !message.read
         }
+        pathId()
         request(body, 'PATCH')
         toggleClass(message, 'read')}}>
       <div className="col-xs-1">
@@ -45,11 +61,18 @@ const checkedClass = message.selected ? 'checked' : ''
         })}
 
         <span className="label label-warning"></span>
-        <a>
+        <Link to={`/messages/${message.id}`}>
           {message.subject}
-        </a>
+        </Link>
       </div>
     </div>
+    <Route path={`/messages/${message.id}`} render={() => (
+      <div>
+        <Body messageId={message.id}/>
+      </div>
+    )}/>
+  </div>
+
   )
 }
 
